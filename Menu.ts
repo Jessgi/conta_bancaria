@@ -3,10 +3,13 @@ import { colors } from './src/util/Colors';
 import { Conta } from './src/model/Conta';
 import { ContaCorrente } from './src/model/ContaCorrente';
 import { ContaPoupanca } from './src/model/ContaPoupanca';
+import { ContaController } from "./src/controller/ContaController";
 
 export function main() {
-
-    let opcao: number;
+    let contas: ContaController = new ContaController();
+    let opcao, numero, agencia,tipo,saldo, limite, aniversario: number;
+    let titular: string;
+    const tipoContas = ['Conta Corrente', 'Conta Poupança'];
     
    // Objeto da Classe ContaCorrente (Teste)
     const conta: ContaCorrente = new ContaCorrente(1, 123, 1, "Adriana", 10000, 1000);
@@ -67,11 +70,45 @@ export function main() {
         switch (opcao) {
             case 1:
                 console.log(colors.fg.whitestrong, "\n\nCriar Conta\n\n", colors.reset);
+
+                console.log("Digite o numero da Agência: ");
+                agencia = readlinesync.questionInt("");
+
+                console.log("Digite o nome do Titular da Conta: ");
+                titular = readlinesync.question("");
+
+                console.log("\n Digite o tipo da Conta: ");
+                tipo = readlinesync.keyInSelect(tipoContas, "", {cancel: false}) + 1;
+
+                console.log("Digite o saldo da Conta: ");
+                saldo = readlinesync.questionFloat("");
                 
-                keyPress()
+
+                switch (tipo) {
+                    case 1:
+                        console.log("Digite o limite da Conta (R$): ");
+                        limite = readlinesync.questionFloat("");
+                        contas.cadastrar(new ContaCorrente(
+                            contas.gerarNumero(),
+                            agencia, tipo,
+                            titular,
+                            saldo, limite));
+                
+                break;
+                    case 2:
+                        console.log("Digite o aniversário da Conta Poupança: ");
+                        aniversario = readlinesync.questionInt("");
+                        contas.cadastrar(new ContaPoupanca(
+                            contas.gerarNumero(),
+                            agencia, tipo, titular,
+                            saldo, aniversario));
+                        break;
+                }
                 break;
             case 2:
                 console.log(colors.fg.whitestrong, "\n\nListar todas as Contas\n\n", colors.reset);
+
+                contas.listarTodas();
 
                 keyPress()
                 break;
@@ -123,6 +160,7 @@ function keyPress(): void {
 }
 
 main();
+
 function sobre(): void {
     console.log("*****************************************************");
     console.log("Banco do Brazil com Z");
